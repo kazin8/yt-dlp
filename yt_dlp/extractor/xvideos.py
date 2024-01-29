@@ -107,7 +107,7 @@ class XVideosIE(InfoExtractor):
             group='title') or self._og_search_title(webpage)
 
         tags = [
-            clean_html(tag[0])
+            clean_html(tag[0].replace('-', ' ').title())
             for tag in re.findall(r'<a[^>]+href="[^"]*tags\/([^"]+)"[^>]*>(.+?)</a>', webpage)]
 
         thumbnails = []
