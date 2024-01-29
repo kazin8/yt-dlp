@@ -106,6 +106,10 @@ class XVideosIE(InfoExtractor):
             webpage, 'title', default=None,
             group='title') or self._og_search_title(webpage)
 
+        tags = [
+            clean_html(tag[0])
+            for tag in re.findall(r'<a[^>]+href="[^"]*tags\/([^"]+)"[^>]*>(.+?)</a>', webpage)]
+
         thumbnails = []
         for preference, thumbnail in enumerate(('', '169')):
             thumbnail_url = self._search_regex(
@@ -156,6 +160,8 @@ class XVideosIE(InfoExtractor):
             'duration': duration,
             'thumbnails': thumbnails,
             'age_limit': 18,
+            'tags': tags,
+            'categories': tags,
         }
 
 
