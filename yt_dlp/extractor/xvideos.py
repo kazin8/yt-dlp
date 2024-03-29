@@ -137,27 +137,35 @@ class XVideosIE(InfoExtractor):
                 'format_id': 'flv',
             })
 
+        manifest_url = None
         for kind, _, format_url in re.findall(
                 r'setVideo([^(]+)\((["\'])(http.+?)\2\)', webpage):
             format_id = kind.lower()
             if format_id == 'hls':
-                hls_formats = self._extract_m3u8_formats(
-                    format_url, video_id, 'mp4',
-                    entry_protocol='m3u8_native', m3u8_id='hls', fatal=False)
-
-                hls_formats_count = len(hls_formats)
-                attempts = 0
-                while True:
-                    self._check_formats(hls_formats, video_id)
-                    if len(hls_formats) == hls_formats_count or attempts > 10:
-                        break
-                    attempts += 1
-                    self.to_screen(
-                        '%s: URL is invalid, try to check again (attempt %d)'
-                        % (video_id, attempts))
-                formats.extend(hls_formats)
-
-                formats.extend(hls_formats)
+                formats.append({
+                    'url': format_url,
+                    'format_id': '%s-%s' % ('hls', 'high'),
+                    'quality': 'high',
+                    'manifest_url': format_url,
+                })
+                manifest_url = format_url
+                # hls_formats = self._extract_m3u8_formats(
+                #     format_url, video_id, 'mp4',
+                #     entry_protocol='m3u8_native', m3u8_id='hls', fatal=False)
+                #
+                # hls_formats_count = len(hls_formats)
+                # attempts = 0
+                # while True:
+                #     self._check_formats(hls_formats, video_id)
+                #     if len(hls_formats) == hls_formats_count or attempts > 10:
+                #         break
+                #     attempts += 1
+                #     self.to_screen(
+                #         '%s: URL is invalid, try to check again (attempt %d)'
+                #         % (video_id, attempts))
+                # formats.extend(hls_formats)
+                #
+                # formats.extend(hls_formats)
             elif format_id in ('urllow', 'urlhigh'):
                 formats.append({
                     'url': format_url,
@@ -174,6 +182,7 @@ class XVideosIE(InfoExtractor):
             'age_limit': 18,
             'tags': tags,
             'categories': tags,
+            'manifest_url': manifest_url
         }
 
 
